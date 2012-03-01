@@ -58,6 +58,19 @@ CNN::Application.configure do
 end
 ```
 
+Email now sent within the staging environment will extract any emails that don't match the whitelist. If after being filtered there are no more recipients because they were filtered out, no email will be sent:
+
+```
+> Article.first.comments.each do |comment|
+>   "Email for: #{comment.user.email}"
+>   ArticleMailer.new_comment(article, comment).deliver
+> end
+=> Email for: john.doe@gmail.com
+=> Email for: megatron@transformers.com
+=> Email for: george@cnn.com
+=> #<Mail::Message:70236177475420, Multipart: false, Headers: <From: no-reply@cnn.com>, <To: george@cnn.com>, <Cc: >, <Bcc: >, <Subject: [staging] New comment on your article>>
+```
+
 ## Contributing
 
 1. Fork it
