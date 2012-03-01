@@ -24,6 +24,7 @@ MailGate works as a standalone extension to the [Mail](https://github.com/mikel/
 An example use case would be if you're running say, CNN.com and you have a commenting system in place where once a comment is added to a post the author and other commenters are notified about your comment. You wouldn't want users to see recieve notifications from activity on your staging site, right? Your existing `config/environments/staging.rb` may look something like:
 
 ```ruby
+# config/environments/staging.rb
 CNN::Application.configure do
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
@@ -40,6 +41,7 @@ end
 Now just change your `delivery_method` to use `:mail_gate` then move your settings to `:delivery_settings` like shown below.
 
 ```ruby
+# config/environments/staging.rb
 CNN::Application.configure do
   config.action_mailer.delivery_method = :mail_gate
   config.action_mailer.mail_gate_settings = {
@@ -68,7 +70,34 @@ Email now sent within the staging environment will extract any emails that don't
 => Email for: john.doe@gmail.com
 => Email for: megatron@transformers.com
 => Email for: george@cnn.com
-=> #<Mail::Message:70236177475420, Multipart: false, Headers: <From: no-reply@cnn.com>, <To: george@cnn.com>, <Cc: >, <Bcc: >, <Subject: [staging] New comment on your article>>
+=> #<Mail::Message:70236177475420, Headers: <From: no-reply@cnn.com>, <To: george@cnn.com>, <Subject: [Staging] New comment on your article!>>
+```
+
+## Using MailGate outside of Rails
+
+If you have a Sinatra app or just using the Mail library in your Ruby project you can still use MailGate:
+
+```ruby
+require 'mail_gate'
+
+Mail.defaults do
+  delivery_method MailGate::Filter,
+    :whitelist => /cnn.com/,
+    :subject_prefix => '[local] ',
+    :delivery_method => :file,
+    :location => '/dev/null'
+end
+```
+
+Then just deliver the email as normal:
+
+```ruby
+Mail.deliver do
+  to 'george@cnn.com'
+  from 'no-reply@cnn.com'
+  subject 'Testing MailGate'
+  body 'Hi! :)'
+end
 ```
 
 ## Contributing
