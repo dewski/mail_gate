@@ -13,6 +13,13 @@ class TestFilter < Test::Unit::TestCase
     assert_equal %w{ garrett@site.com }, mail.to
   end
 
+  def test_with_no_matching_whitelist
+    mail = with_whitelist \
+      :to => 'garrett@site.com',
+      :whitelist => /cnn.com/
+    assert mail.to.blank?, 'no mail values'
+  end
+
   def test_to_field_whitelisted_emails
     mail = with_whitelist \
       :to => %w{ garrett@site.com matt@site.com non-staff@user.com },
