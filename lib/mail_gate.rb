@@ -1,5 +1,5 @@
-require "mail_gate/version"
+require 'mail_gate/version'
 
 module MailGate
-  # Your code goes here...
+  autoload :Filter, 'mail_gate/filter'
 end
