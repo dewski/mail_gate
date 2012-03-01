@@ -1,4 +1,5 @@
-# MailGate
+MailGate [![Build Status](https://secure.travis-ci.org/dewski/mail_gate.png)](http://travis-ci.org/dewski/mail_gate)
+========
 
 MailGate is an additional delivery method for the [Mail](https://github.com/mikel/mail) gem that lets you restrict the delivery of mail to only whitelisted emails. Ideal for staging environments and other situations where you may not want users of your application to recieve emails. Works with
 
