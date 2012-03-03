@@ -46,7 +46,6 @@ CNN::Application.configure do
   config.action_mailer.delivery_method = :mail_gate
   config.action_mailer.mail_gate_settings = {
     :whitelist        => /cnn.com/,
-    :subject_prefix   => '[Staging] ',
     :delivery_method  => :smtp,
     :delivery_settings => {
       :address        => 'smtp.sendgrid.net',
@@ -59,6 +58,22 @@ CNN::Application.configure do
   }
 end
 ```
+
+By default the emails send will have the same subject that they normally would. If you'd like to customize the subject to inform the reader where it was sent from you can do that with the `:subject_prefix` option:
+
+```ruby
+# config/environments/staging.rb
+CNN::Application.configure do
+  config.action_mailer.delivery_method = :mail_gate
+  config.action_mailer.mail_gate_settings = {
+    :whitelist        => /cnn.com/,
+    :subject_prefix   => '[Staging] ',
+    # ...
+  }
+end
+```
+
+Now your emails that are sent will have `[Staging] New comment on your article!` as the subject rather than just `New comment on your article!`. It's entirely up to you what you may put as the prefix, be it the current deploy git SHA, or if you want to send the server's hostname that sent the mail.
 
 Email now sent within the staging environment will extract any recipient emails that don't match the whitelist. If after being filtered there aren't any recipients left because they were filtered out, no email will be sent:
 
