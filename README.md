@@ -1,7 +1,7 @@
 MailGate [![Build Status](https://secure.travis-ci.org/dewski/mail_gate.png)](http://travis-ci.org/dewski/mail_gate)
 ========
 
-MailGate is an additional delivery method for the [Mail](https://github.com/mikel/mail) gem that lets you restrict the delivery of mail to only whitelisted emails. Ideal for staging environments and other situations where you may not want users of your application to recieve emails. Works with
+MailGate is an additional delivery method for the [Mail](https://github.com/mikel/mail) gem that lets you restrict the delivery of mail to only whitelisted emails. Ideal for staging environments where you may be using production data and do not want them to recieve emails from your mailers when you submit comments, contact forms, or anything else that may trigger mail delivery.
 
 ## Installation
 
@@ -21,7 +21,7 @@ Or install it yourself as:
 
 MailGate works as a standalone extension to the [Mail](https://github.com/mikel/mail) gem or as a delivery method within Rails applications.
 
-An example use case would be if you're running say, CNN.com and you have a commenting system in place where once a comment is added to a post the author and other commenters are notified about your comment. You wouldn't want users to see recieve notifications from activity on your staging site, right? Your existing `config/environments/staging.rb` may look something like:
+To configure MailGate, edit your ActionMailer configuration to use `:mail_gate` as the delivery method, then copy your existing settings to  `mail_gate_settings`:
 
 ```ruby
 # config/environments/staging.rb
@@ -38,7 +38,7 @@ CNN::Application.configure do
 end
 ```
 
-Now just change your `delivery_method` to use `:mail_gate` then move your settings to `:delivery_settings` like shown below.
+Becomes:
 
 ```ruby
 # config/environments/staging.rb
@@ -60,7 +60,7 @@ CNN::Application.configure do
 end
 ```
 
-Email now sent within the staging environment will extract any emails that don't match the whitelist. If after being filtered there are no more recipients because they were filtered out, no email will be sent:
+Email now sent within the staging environment will extract any recipient emails that don't match the whitelist. If after being filtered there aren't any recipients left because they were filtered out, no email will be sent:
 
 ```
 > Article.first.comments.each do |comment|
@@ -72,6 +72,8 @@ Email now sent within the staging environment will extract any emails that don't
 => Email for: george@cnn.com
 => #<Mail::Message:70236177475420, Headers: <From: no-reply@cnn.com>, <To: george@cnn.com>, <Subject: [Staging] New comment on your article!>>
 ```
+
+Notice only the email for `george@cnn.com` was delivered.
 
 ## Using MailGate outside of Rails
 
@@ -109,4 +111,4 @@ end
 5. Create new Pull Request
 
 ## Copyright
-Copyright © 2012 Garrett Bjerkhoel. See [MIT-LICENSE](https://github.com/dewski/mail_gate/blob/master/LICENSE) for details.
+Copyright © 2012 Garrett Bjerkhoel. See [LICENSE](https://github.com/dewski/mail_gate/blob/master/LICENSE) for details.
