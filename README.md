@@ -59,6 +59,28 @@ CNN::Application.configure do
 end
 ```
 
+When the email is sent, any emails that end up being extracted because they don't match the whitelist will be appended to the email's body so you know the intended recipients. So if you had a whitelist only for CNN.com, and you sent an email out to nytimes.com, it'd look something like:
+
+```
+Thanks for reading our interesting article!
+
+Extracted Recipients: user@nytimes.com
+```
+
+If you dislike that behavior, you can easily turn it off by setting `append_emails` to `false` in the settings.
+
+
+```ruby
+# config/environments/staging.rb
+CNN::Application.configure do
+  config.action_mailer.delivery_method = :mail_gate
+  config.action_mailer.mail_gate_settings = {
+    :whitelist     => /cnn.com/,
+    :append_emails => false
+  }
+end
+```
+
 By default the emails send will have the same subject that they normally would. If you'd like to customize the subject to inform the reader where it was sent from you can do that with the `:subject_prefix` option:
 
 ```ruby
