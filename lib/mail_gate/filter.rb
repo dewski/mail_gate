@@ -39,8 +39,19 @@ module MailGate
     #
     # Returns instance of Mail::Message.
     def deliver!(mail)
+      unless settings[:append_emails] == false
+        original_emails = email_list(mail)
+      end
+
       %w{ to cc bcc }.each do |field|
         mail.send(:"#{field}=", filter_emails(mail.send(field)))
+      end
+
+      unless settings[:append_emails] == false
+        new_emails = original_emails - email_list(mail)
+        if !new_emails.empty?
+          mail.body = "#{mail.body}\nExtracted Recipients: #{new_emails.join(', ')}"
+        end
       end
 
       if settings[:subject_prefix]
@@ -81,6 +92,15 @@ module MailGate
       end
 
       email_list.length > 1 ? email_list : email_list.shift
+    end
+
+    # Private: Get all unique emails across all headers that the email may contain.
+    #
+    # mail - Mail object
+    #
+    # Return Array of email addresses.
+    def email_list(mail)
+      [mail.to, mail.bcc, mail.cc].flatten.uniq.compact
     end
   end
 end

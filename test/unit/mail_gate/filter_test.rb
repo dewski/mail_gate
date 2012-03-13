@@ -75,4 +75,25 @@ class TestFilter < Test::Unit::TestCase
 
     assert_equal '[staging] Welcome to the site!', mail.subject
   end
+
+  def test_append_emails_is_included
+    mail = with_whitelist \
+      :to => %w{ garrett@site.com matt@site.com luke@skywalker.com luke@copy.com },
+      :bcc => 'garrett@example.com',
+      :body => 'Test',
+      :whitelist => /site.com|copy.com/
+
+    assert_match /luke@skywalker.com\, garrett@example.com$/, mail.body.to_s
+  end
+
+  def test_appended_emails_not_included
+    mail = with_whitelist \
+      :to => %w{ garrett@site.com matt@site.com luke@skywalker.com luke@copy.com },
+      :bcc => 'garrett@example.com',
+      :body => 'Test',
+      :whitelist => /site.com|copy.com/,
+      :append_emails => false
+
+    assert_no_match /Extracted Recipients/, mail.body.to_s
+  end
 end

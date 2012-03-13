@@ -29,7 +29,8 @@ class Test::Unit::TestCase
   def with_whitelist(options={})
     filter = MailGate::Filter.new \
       :whitelist => options.delete(:whitelist),
-      :subject_prefix => options.delete(:subject_prefix)
+      :subject_prefix => options.delete(:subject_prefix),
+      :append_emails => options.delete(:append_emails)
 
     mail = Mail.new options.merge(:from => 'test@mail_gate.com')
 
