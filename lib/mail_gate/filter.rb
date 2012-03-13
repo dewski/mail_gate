@@ -50,7 +50,7 @@ module MailGate
       unless settings[:append_emails] == false
         new_emails = original_emails - email_list(mail)
         if !new_emails.empty?
-          mail.body = "#{mail.body}\nExtracted Recipients: #{new_emails.join(', ')}"
+          mail.body = "#{mail.body}\n\nExtracted Recipients: #{new_emails.join(', ')}"
         end
       end
 
