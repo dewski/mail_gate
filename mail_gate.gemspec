@@ -15,5 +15,5 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
   gem.version       = MailGate::VERSION
 
-  gem.add_dependency 'mail', '~> 2.4.1'
+  gem.add_dependency 'mail'
 end
