@@ -26,7 +26,7 @@ module MailGate
 
     def initialize(settings = {})
       self.settings = settings
-      @whitelist = Regexp.new(settings.delete(:whitelist) || /.*/)
+      @whitelist = Regexp.new(settings.fetch(:whitelist, /.*/))
       delivery_method = settings.fetch(:delivery_method, :test)
       delivery_settings = settings.fetch(:delivery_settings, {})
       @delivery_method = Mail::Configuration.instance.lookup_delivery_method(delivery_method).new(delivery_settings)
