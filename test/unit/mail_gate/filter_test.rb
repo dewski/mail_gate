@@ -9,7 +9,7 @@ class TestFilter < Test::Unit::TestCase
   def test_with_whitelist_as_string
     mail = with_whitelist \
       :to => 'garrett@site.com',
-      :whitelist => '@site.com'
+      :whitelist => /\@site.com/
     assert_equal %w{ garrett@site.com }, mail.to
   end
 

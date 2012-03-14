@@ -28,7 +28,7 @@ class Test::Unit::TestCase
   # Returns instance of Mail::Message.
   def with_whitelist(options={})
     filter = MailGate::Filter.new \
-      :whitelist => options.delete(:whitelist),
+      :whitelist => options.fetch(:whitelist, /.*/),
       :subject_prefix => options.delete(:subject_prefix),
       :append_emails => options.delete(:append_emails)
 
