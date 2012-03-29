@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>MailGate by dewski</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>MailGate</h1>
+        <h2>MailGate is an additional delivery method for the Mail gem that lets you restrict the delivery of mail to only whitelisted emails.</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/dewski/mail_gate/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/dewski/mail_gate/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/dewski/mail_gate/tarball/master" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h2>Installation</h2>
+
+<p>Add the following line to your application's Gemfile:</p>
+
+<pre><code>gem 'mail_gate'
+</code></pre>
+
+<p>And then run:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>Or install it yourself with:</p>
+
+<pre><code>$ gem install mail_gate
+</code></pre>
+
+<h2>Usage</h2>
+
+<p>MailGate works as a standalone extension to the <a href="https://github.com/mikel/mail">Mail</a> gem or as a delivery method within Rails applications.</p>
+
+<p>To configure MailGate, edit your ActionMailer configuration to use <code>:mail_gate</code> as the delivery method, then copy your existing settings to  <code>mail_gate_settings</code>:</p>
+
+<div class="highlight">
+<pre><span class="c1"># config/environments/staging.rb</span>
+<span class="no">CNN</span><span class="o">::</span><span class="no">Application</span><span class="o">.</span><span class="n">configure</span> <span class="k">do</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">action_mailer</span><span class="o">.</span><span class="n">delivery_method</span> <span class="o">=</span> <span class="ss">:smtp</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">action_mailer</span><span class="o">.</span><span class="n">smtp_settings</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="ss">:address</span>        <span class="o">=&gt;</span> <span class="s1">'smtp.sendgrid.net'</span><span class="p">,</span>
+    <span class="ss">:port</span>           <span class="o">=&gt;</span> <span class="s1">'25'</span><span class="p">,</span>
+    <span class="ss">:authentication</span> <span class="o">=&gt;</span> <span class="ss">:plain</span><span class="p">,</span>
+    <span class="ss">:user_name</span>      <span class="o">=&gt;</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">'SENDGRID_USERNAME'</span><span class="o">]</span><span class="p">,</span>
+    <span class="ss">:password</span>       <span class="o">=&gt;</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">'SENDGRID_PASSWORD'</span><span class="o">]</span><span class="p">,</span>
+    <span class="ss">:domain</span>         <span class="o">=&gt;</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">'SENDGRID_DOMAIN'</span><span class="o">]</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>Becomes:</p>
+
+<div class="highlight">
+<pre><span class="c1"># config/environments/staging.rb</span>
+<span class="no">CNN</span><span class="o">::</span><span class="no">Application</span><span class="o">.</span><span class="n">configure</span> <span class="k">do</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">action_mailer</span><span class="o">.</span><span class="n">delivery_method</span> <span class="o">=</span> <span class="ss">:mail_gate</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">action_mailer</span><span class="o">.</span><span class="n">mail_gate_settings</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="ss">:whitelist</span>        <span class="o">=&gt;</span> <span class="sr">/cnn.com/</span><span class="p">,</span>
+    <span class="ss">:delivery_method</span>  <span class="o">=&gt;</span> <span class="ss">:smtp</span><span class="p">,</span>
+    <span class="ss">:delivery_settings</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="ss">:address</span>        <span class="o">=&gt;</span> <span class="s1">'smtp.sendgrid.net'</span><span class="p">,</span>
+      <span class="ss">:port</span>           <span class="o">=&gt;</span> <span class="s1">'25'</span><span class="p">,</span>
+      <span class="ss">:authentication</span> <span class="o">=&gt;</span> <span class="ss">:plain</span><span class="p">,</span>
+      <span class="ss">:user_name</span>      <span class="o">=&gt;</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">'SENDGRID_USERNAME'</span><span class="o">]</span><span class="p">,</span>
+      <span class="ss">:password</span>       <span class="o">=&gt;</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">'SENDGRID_PASSWORD'</span><span class="o">]</span><span class="p">,</span>
+      <span class="ss">:domain</span>         <span class="o">=&gt;</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">'SENDGRID_DOMAIN'</span><span class="o">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>When the email is sent, any emails that end up being extracted because they don't match the whitelist will be appended to the email's body so you know the intended recipients. So if you had a whitelist only for CNN.com, and you sent an email out to nytimes.com, it'd look something like:</p>
+
+<pre><code>Thanks for reading our interesting article!
+
+Extracted Recipients: user@nytimes.com
+</code></pre>
+
+<p>If you dislike that behavior, you can easily turn it off by setting <code>append_emails</code> to <code>false</code> in the settings.</p>
+
+<div class="highlight">
+<pre><span class="c1"># config/environments/staging.rb</span>
+<span class="no">CNN</span><span class="o">::</span><span class="no">Application</span><span class="o">.</span><span class="n">configure</span> <span class="k">do</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">action_mailer</span><span class="o">.</span><span class="n">delivery_method</span> <span class="o">=</span> <span class="ss">:mail_gate</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">action_mailer</span><span class="o">.</span><span class="n">mail_gate_settings</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="ss">:whitelist</span>     <span class="o">=&gt;</span> <span class="sr">/cnn.com/</span><span class="p">,</span>
+    <span class="ss">:append_emails</span> <span class="o">=&gt;</span> <span class="kp">false</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>By default the emails send will have the same subject that they normally would. If you'd like to customize the subject to inform the reader where it was sent from you can do that with the <code>:subject_prefix</code> option:</p>
+
+<div class="highlight">
+<pre><span class="c1"># config/environments/staging.rb</span>
+<span class="no">CNN</span><span class="o">::</span><span class="no">Application</span><span class="o">.</span><span class="n">configure</span> <span class="k">do</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">action_mailer</span><span class="o">.</span><span class="n">delivery_method</span> <span class="o">=</span> <span class="ss">:mail_gate</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">action_mailer</span><span class="o">.</span><span class="n">mail_gate_settings</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="ss">:whitelist</span>        <span class="o">=&gt;</span> <span class="sr">/cnn.com/</span><span class="p">,</span>
+    <span class="ss">:subject_prefix</span>   <span class="o">=&gt;</span> <span class="s1">'[Staging] '</span><span class="p">,</span>
+    <span class="c1"># ...</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>Now your emails that are sent will have <code>[Staging] New comment on your article!</code> as the subject rather than just <code>New comment on your article!</code>. It's entirely up to you what you may put as the prefix, be it the current deploy git SHA, or if you want to send the server's hostname that sent the mail.</p>
+
+<p>Email now sent within the staging environment will extract any recipient emails that don't match the whitelist. If after being filtered there aren't any recipients left because they were filtered out, no email will be sent:</p>
+
+<pre><code>&gt; Article.first.comments.each do |comment|
+&gt;   "Email for: #{comment.user.email}"
+&gt;   ArticleMailer.new_comment(article, comment).deliver
+&gt; end
+=&gt; Email for: john.doe@gmail.com
+=&gt; Email for: megatron@transformers.com
+=&gt; Email for: george@cnn.com
+=&gt; #&lt;Mail::Message:70236177475420, Headers: &lt;From: no-reply@cnn.com&gt;,
+   &lt;To: george@cnn.com&gt;, &lt;Subject: [Staging] New comment on your article!&gt;&gt;
+</code></pre>
+
+<p>Notice only the email for <code>george@cnn.com</code> was delivered.</p>
+
+<h2>Using MailGate outside of Rails</h2>
+
+<p>If you have a Sinatra app or just using the Mail library in your Ruby project you can still use MailGate:</p>
+
+<div class="highlight">
+<pre><span class="nb">require</span> <span class="s1">'mail_gate'</span>
+
+<span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+  <span class="n">delivery_method</span> <span class="no">MailGate</span><span class="o">::</span><span class="no">Filter</span><span class="p">,</span>
+    <span class="ss">:whitelist</span> <span class="o">=&gt;</span> <span class="sr">/cnn.com/</span><span class="p">,</span>
+    <span class="ss">:subject_prefix</span> <span class="o">=&gt;</span> <span class="s1">'[local] '</span><span class="p">,</span>
+    <span class="ss">:delivery_method</span> <span class="o">=&gt;</span> <span class="ss">:file</span><span class="p">,</span>
+    <span class="ss">:location</span> <span class="o">=&gt;</span> <span class="s1">'/dev/null'</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>Then just deliver the email as normal:</p>
+
+<div class="highlight">
+<pre><span class="no">Mail</span><span class="o">.</span><span class="n">deliver</span> <span class="k">do</span>
+  <span class="n">to</span> <span class="s1">'george@cnn.com'</span>
+  <span class="n">from</span> <span class="s1">'no-reply@cnn.com'</span>
+  <span class="n">subject</span> <span class="s1">'Testing MailGate'</span>
+  <span class="n">body</span> <span class="s1">'Hi! :)'</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<h2>Contributing</h2>
+
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Added some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol><h2>Copyright</h2>
+
+<p>Copyright © 2012 Garrett Bjerkhoel. See <a href="https://github.com/dewski/mail_gate/blob/master/LICENSE">LICENSE</a> for details.</p>
+      </section>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-26132095-2");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
